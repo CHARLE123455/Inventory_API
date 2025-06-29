@@ -1,0 +1,58 @@
+{
+  "name": "inventory_api",
+  "version": "1.0.0",
+  "description": "Inventory_API is a inventory tracker built with Node.js(Express),Typescript, Prisma,PostgreSQL, designed designed with Image Upload.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon ts-node-dev app.ts",
+    "start": "ts-node-dev app.ts",
+    "prod": "node app.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CHARLE123455/Inventory_API.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CHARLE123455/Inventory_API/issues"
+  },
+  "homepage": "https://github.com/CHARLE123455/Inventory_API#readme",
+  "dependencies": {
+    "@prisma/client": "^6.10.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/helmet": "^0.0.48",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/validator": "^13.15.2",
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^1.41.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "helmet": "^8.1.0",
+    "joi": "^17.13.3",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.1",
+    "multer-storage-cloudinary": "^4.0.0",
+    "nodemon": "^3.1.10",
+    "postgres": "^3.4.7",
+    "prisma": "^6.10.1",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3",
+    "validator": "^13.15.15"
+  },
+  "devDependencies": {
+    "@types/multer": "^1.4.13"
+  }
+}

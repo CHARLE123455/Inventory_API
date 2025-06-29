@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  isVerified Boolean  @default(false)
+  storeId    String
+  store      Store    @relation(fields: [storeId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Store {
+  id         String     @id @default(uuid())
+  name       String
+  address    String?
+  users      User[]
+  items      Item[]
+  logs       Log[]
+  categories Category[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+}
+
+model Category {
+  id      String @id @default(uuid())
+  name    String
+  storeId String
+  store   Store  @relation(fields: [storeId], references: [id])
+  items   Item[]
+}
+
+model Item {
+  id         String   @id @default(uuid())
+  name       String
+  price      Decimal  @default(0.0) @db.Decimal(10, 2)
+  quantity   Int      @default(0)
+  categoryId String
+  category   Category @relation(fields: [categoryId], references: [id])
+  storeId    String
+  store      Store    @relation(fields: [storeId], references: [id])
+  imageUrl   String?
+  logs       Log[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Log {
+  id          String    @id @default(uuid())
+  action      LogStatus
+  details     String
+  itemId      String?
+  item        Item?     @relation(fields: [itemId], references: [id])
+  storeId     String
+  store       Store     @relation(fields: [storeId], references: [id])
+  quantity    Int?
+  purchaser   String?
+  fromStoreId String?
+  toStoreId   String?
+  createdAt   DateTime  @default(now())
+}
+
+enum LogStatus {
+  PURCHASE
+  UPDATE
+  SELL
+  RETURNED
+  SWAP_INCOMING
+  SWAP_OUTGOING
+}
