@@ -1,2 +1,2 @@
 # Inventory_API
-An Inventory API that Logs and Tracks Inventory movement across stores.
+Inventory_API is a inventory tracker built with Node.js(Express),Typescript, Prisma,PostgreSQL, designed designed with Image Upload.
