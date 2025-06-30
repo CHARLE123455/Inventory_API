@@ -10,6 +10,7 @@ const env = joi.object({
     EMAIL_PORT: joi.string().required(),
     EMAIL_USER:joi.string().required(),
     EMAIL_PASS: joi.string().required(),
+    NODE_ENV: joi.string()
 }).unknown();
 
 const { error, value: envVariables } = env.validate(process.env, {
@@ -32,7 +33,8 @@ if (error) {
      emailHost: envVariables.EMAIL_HOST,
      emailPort: envVariables.EMAIL_PORT,
      emailUser: envVariables.EMAIL_PORT,
-     emailPass: envVariables.EMAIL_PASS
+     emailPass: envVariables.EMAIL_PASS,
+     nodeEnv: envVariables.NODE_ENV,
  };
 
  export default config;

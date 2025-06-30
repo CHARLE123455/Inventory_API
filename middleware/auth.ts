@@ -1,11 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config/config'
+import prisma from '../prisma';
+import { User } from '@prisma/client';
+
+
 
 declare global {
     namespace Express {
         interface Request {
-            id: string;
+            user: User;
         }
     }
 }
@@ -13,9 +17,6 @@ declare global {
 const jwtSecret = config.jwtSecret;
 const jwtExpiration = config.jwtExpires
 
-interface JwtPayload {
-    id: string;
-}
 
 export const generateUserToken = <T extends { id: string }>(user: T) => {
     return jwt.sign({ id: user.id }, jwtSecret, {
@@ -23,27 +24,26 @@ export const generateUserToken = <T extends { id: string }>(user: T) => {
     });
 };
 
-export const authenticateUserToken = (req: Request,res: Response,next: NextFunction) => {
+export const authenticateUserToken = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res
-            .status(401)
-            .json({ message: 'Invalid authorization header format' });
+    if (!authHeader?.startsWith('Bearer ')) {
+        return res.status(401).json({ message: 'Invalid authorization header format' });
     }
 
     const token = authHeader.split(' ')[1];
 
     try {
-        const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+        const decoded = jwt.verify(token, jwtSecret) as { id: string };
 
-        if (!decoded.id) throw new Error('Invalid payload');
+        const user = await prisma.user.findUnique({ where: { id: decoded.id } });
 
-        req.id = decoded.id;
+        if (!user) return res.status(401).json({ message: 'User not found' });
+
+        req.user = user;
         next();
     } catch {
-        return res
-            .status(403)
-            .json({ message: 'Invalid or expired token' });
+        return res.status(403).json({ message: 'Invalid or expired token' });
     }
 };
+
