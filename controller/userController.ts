@@ -6,6 +6,7 @@ import { User } from '@prisma/client';
 import { boolean } from "joi";
 import { AppError } from "root/util/error";
 import prisma from '../prisma';
+import { generateUserToken } from "root/middleware/auth";
 
 
 const User = prisma.user;
@@ -69,4 +70,28 @@ export const register = async(req:Request, res:Response) => {
         "User Registered Successfully"
     )
 };
-
+export const login = async(req: Request, res: Response) => {
+    const { email, password} = req.body;
+    if(![email, password].every(boolean)){
+        throw new AppError(400,"email and password required");
+    };
+    const validUser = await User.findFirst({
+        where: {
+            email,
+        }
+    });
+    if(!validUser){
+        throw new AppError(404, " user not found");
+    };
+    const isPasswordCorrect = await comparePassword(password,validUser.password)
+    if(!isPasswordCorrect){
+        throw new AppError(401, " Incorrect Password, Please Try Again")
+    };
+    return createSendToken(
+        validUser,
+        "success",
+        200,
+        res,
+        "Login Successful"
+    );
+};
