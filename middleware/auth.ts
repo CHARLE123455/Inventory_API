@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import config from '../config/config'
 import prisma from '../prisma';
 import { User } from '@prisma/client';
+import { AppError } from '../util/error';
 
 
 
@@ -13,7 +14,7 @@ declare global {
         }
     }
 }
-
+const User = prisma.user;
 const jwtSecret = config.jwtSecret;
 const jwtExpiration = config.jwtExpires
 
@@ -28,7 +29,7 @@ export const authenticateUserToken = async (req: Request, res: Response, next: N
     const authHeader = req.headers.authorization;
 
     if (!authHeader?.startsWith('Bearer ')) {
-        return res.status(401).json({ message: 'Invalid authorization header format' });
+        throw new AppError(401, "Invalid Auth Header format")
     }
 
     const token = authHeader.split(' ')[1];
@@ -36,14 +37,20 @@ export const authenticateUserToken = async (req: Request, res: Response, next: N
     try {
         const decoded = jwt.verify(token, jwtSecret) as { id: string };
 
-        const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+        const user = await User.findUnique({ 
+            where: { 
+                id: decoded.id 
+            } 
+        });
 
-        if (!user) return res.status(401).json({ message: 'User not found' });
+        if (!user){
+            throw new AppError(404, "User not found")
+        };
 
         req.user = user;
         next();
     } catch {
-        return res.status(403).json({ message: 'Invalid or expired token' });
+        throw new AppError(403, "Invalid or Expired Token")
     }
 };
 
